@@ -1,0 +1,31 @@
+image:
+  repository: timescale/timescaledb-ha
+  tag: pg17
+  pullPolicy: IfNotPresent
+
+postgresql:
+  username: postgres
+  password: mysecretpassword
+  database: mytimescale
+
+initdb:
+  enabled: true
+  sql: |
+    -- Example bootstrap script
+    CREATE EXTENSION IF NOT EXISTS timescaledb;
+    CREATE TABLE IF NOT EXISTS metrics (
+      time TIMESTAMPTZ NOT NULL,
+      value DOUBLE PRECISION NULL
+    );
+    SELECT create_hypertable('metrics', 'time', if_not_exists => TRUE);
+
+service:
+  type: NodePort
+  port: 30001
+
+persistence:
+  enabled: true
+  size: 20Gi
+  storageClass: ""
+
+resources: {}

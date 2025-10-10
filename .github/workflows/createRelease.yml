@@ -46,14 +46,14 @@ jobs:
         then
           echo RELEASE_VERSION=$(./get_version.sh ${{ inputs.versionChoice }}) >> $GITHUB_ENV
         fi
-        sed -i -E "s/^version:.*/version: ${{ env.RELEASE_VERSION }}/" timescaledb/Chart.yaml
+        sed -i -E "s/^version:.*/version: $RELEASE_VERSION/" timescaledb/Chart.yaml
         echo "git add ."
         git add .
         modifications=$(git status | grep "modified" || true)
         if [ ! -z "$modifications" ]
         then
           echo "modifications found: $modifications"
-          git commit -m "modified version ${{ env.RELEASE_VERSION }} in Chart.yaml"
+          git commit -m "modified version $RELEASE_VERSION in Chart.yaml"
           git push
         fi
       env:

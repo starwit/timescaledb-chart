@@ -5,9 +5,17 @@ name: Create release
 on:
   workflow_dispatch:
     inputs:
+      versionChoice:
+        type: choice
+        required: true
+        description: Version Change
+        options:
+        - patch
+        - minor
+        - major
       release-version: # id of input
         description: "semver release version e.g. with 0.1.0-1"
-        required: true
+        required: false
 
 permissions:
   contents: write
@@ -32,6 +40,15 @@ jobs:
       with:
         fetch-depth: '0'
 
+    - name: create new version in version.txt
+      run: |
+        if [ ! -z "${{ env.RELEASE_VERSION }}" ] 
+        then
+          echo RELEASE_VERSION=$(./set_version.sh ${{ inputs.versionChoice }}) >> $GITHUB_ENV
+        fi
+      env:
+        VERSION: ${{ inputs.versionChoice }}
+
     - name: Create github release
       run: gh release create ${{ env.RELEASE_VERSION }} -F CHANGELOG.md
       env:
@@ -54,6 +71,11 @@ jobs:
     - name: login to Helm registry
       run: helm registry login registry-1.docker.io -u starwit -p ${{ secrets.DOCKERHUB_TOKEN }}
 
+    - name: get version number
+      working-directory: timescaledb
+      run: |
+        yq eval ".version = ${{ env.RELEASE_VERSION }}" -i Chart.yaml
+
     - name: run helm update
       working-directory: timescaledb
       run: helm dep update
@@ -61,10 +83,5 @@ jobs:
     - name: run helm package
       run: helm package timescaledb
 
-    - name: get version number
-      working-directory: timescaledb
-      run: |
-        echo "HELM_VERSION=$(grep version: Chart.yaml | head -1 | awk '{print $2}')" >> $GITHUB_ENV
-
     - name: run helm push
-      run: helm push timescaledb-chart-${{ env.HELM_VERSION }}.tgz oci://registry-1.docker.io/starwitorg
+      run: helm push timescaledb-chart-${{ env.RELEASE_VERSION }}.tgz oci://registry-1.docker.io/starwitorg

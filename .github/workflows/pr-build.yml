@@ -1,0 +1,34 @@
+name: PR Build
+
+# PR build
+
+on:
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  packages: read
+  contents: read
+
+# just runs Maven, NPM and Docker build
+jobs:
+  checks:
+    name: "Checks"
+    runs-on: [self-hosted, linux, X64]
+
+    steps:
+    - name: get helm
+      uses: azure/setup-helm@v4
+
+    - name: run helm dependency update
+      working-directory: timescaledb
+      run: helm dep update
+
+    - name: run helm template
+      working-directory: timescaledb
+      run: helm template .
+    
+
+
+

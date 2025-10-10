@@ -46,7 +46,7 @@ jobs:
         then
           echo RELEASE_VERSION=$(./get_version.sh ${{ inputs.versionChoice }}) >> $GITHUB_ENV
         fi
-        sed -i -E "s/^version:.*/version: ${{ env.RELEASE_VERSION }}/" Chart.yaml
+        sed -i -E "s/^version:.*/version: ${{ env.RELEASE_VERSION }}/" timescaledb/Chart.yaml
         echo "git add ."
         git add .
         modifications=$(git status | grep "modified" || true)

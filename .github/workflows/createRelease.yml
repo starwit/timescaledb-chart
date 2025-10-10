@@ -39,6 +39,7 @@ jobs:
 
     - name: Checkout tag
       run: |
+        git pull --tags
         git checkout ${{ env.RELEASE_VERSION }}
 
   publish_helm:

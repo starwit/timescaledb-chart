@@ -42,7 +42,7 @@ jobs:
 
     - name: create new version in version.txt
       run: |
-        if [ ! -z "${{ env.RELEASE_VERSION }}" ] 
+        if [ -z "${{ env.RELEASE_VERSION }}" ] 
         then
           echo RELEASE_VERSION=$(./get_version.sh ${{ inputs.versionChoice }}) >> $GITHUB_ENV
         fi

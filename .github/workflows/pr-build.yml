@@ -21,6 +21,15 @@ jobs:
     - name: get helm
       uses: azure/setup-helm@v4
 
+    - name: checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: '0'
+
+    - name: run helm dependency update
+      working-directory: timescaledb
+      run: helm dep update
+
     - name: run helm template
       working-directory: timescaledb
       run: helm template .

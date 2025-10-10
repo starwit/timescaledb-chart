@@ -21,7 +21,7 @@ env:
 
 jobs:
   build:
-    name: "Creating maven and github release"
+    name: "Creating github release"
     runs-on: [self-hosted, linux, X64]
     
     steps:

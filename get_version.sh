@@ -6,7 +6,7 @@ get_next_version() {
     increment_type="patch"
   fi
 
-  local base=$(cat version.txt)
+  local base=$(grep version: timescaledb/Chart.yaml | head -1 | awk '{print $2}')
 
   local MAJOR=$(echo $base | sed -e "s#$RE#\1#")
   local MINOR=$(echo $base | sed -e "s#$RE#\2#")
@@ -14,16 +14,16 @@ get_next_version() {
 
   case "$increment_type" in
   major)
-    ((MAJOR += 1))
-    ((MINOR = 0))
-    ((PATCH = 0))
+    $((MAJOR += 1))
+    $((MINOR = 0))
+    $((PATCH = 0))
     ;;
   minor)
-    ((MINOR += 1))
-    ((PATCH = 0))
+    $((MINOR += 1))
+    $((PATCH = 0))
     ;;
   patch)
-    ((PATCH += 1))
+    $((PATCH += 1))
     ;;
   esac
 

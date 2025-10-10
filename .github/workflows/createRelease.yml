@@ -68,4 +68,6 @@ jobs:
 
     - name: run helm push
       working-directory: timescaledb
-      run: helm push timescaledb-chart-${{ env.HELM_VERSION }}.tgz oci://registry-1.docker.io/starwitorg
+      run: |
+        find .
+        helm push timescaledb-chart-${{ env.HELM_VERSION }}.tgz oci://registry-1.docker.io/starwitorg

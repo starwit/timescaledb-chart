@@ -67,4 +67,5 @@ jobs:
         echo "HELM_VERSION=$(grep version: Chart.yaml | head -1 | awk '{print $2}')" >> $GITHUB_ENV
 
     - name: run helm push
+      working-directory: timescaledb
       run: helm push timescaledb-chart-${{ env.HELM_VERSION }}.tgz oci://registry-1.docker.io/starwitorg

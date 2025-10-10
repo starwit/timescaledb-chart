@@ -74,7 +74,7 @@ jobs:
     - name: get version number
       working-directory: timescaledb
       run: |
-        yq eval ".version = ${{ env.RELEASE_VERSION }}" -i Chart.yaml
+        sed -i -E "s/^version:.*/version: ${{ env.RELEASE_VERSION }}/" Chart.yaml
 
     - name: run helm update
       working-directory: timescaledb

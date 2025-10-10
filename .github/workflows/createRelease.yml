@@ -6,8 +6,8 @@ on:
   workflow_dispatch:
     inputs:
       release-version: # id of input
-        description: "override default release version e.g. with 0.1.0-1"
-        required: false
+        description: "semver release version e.g. with 0.1.0-1"
+        required: true
 
 permissions:
   contents: write
@@ -15,7 +15,6 @@ permissions:
 
 env:
   RELEASE_VERSION: ${{ github.event.inputs.release-version }}
-  IMAGE_NAME: urbalytix
   DOCKERHUB_USERNAME: starwit
   DOCKERHUB_ORG: starwitorg  
 
@@ -33,18 +32,14 @@ jobs:
       with:
         fetch-depth: '0'
 
-    - name: Get tag name
-      run: |
-        echo "TAG=$( git describe --abbrev=0 )" >> $GITHUB_ENV
-
     - name: Create github release
-      run: gh release create ${{ env.TAG }} -F CHANGELOG.md
+      run: gh release create ${{ env.RELEASE_VERSION }} -F CHANGELOG.md
       env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Checkout tag
       run: |
-        git checkout ${{ env.TAG }}
+        git checkout ${{ env.RELEASE_VERSION }}
 
   publish_helm:
     name: "Publish helm chart"

@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
  
 ## [1.0.0] - 2025-10-10
 
-Initial helm chart fpr timescale.
+Initial helm chart for timescale.
   
 ### Added
  

@@ -40,14 +40,23 @@ jobs:
       with:
         fetch-depth: '0'
 
-    - name: create new version in version.txt
+    - name: create new version
       run: |
-        if [ ! -z "${{ env.RELEASE_VERSION }}" ] 
+        if [ -z "${{ env.RELEASE_VERSION }}" ] 
         then
-          echo RELEASE_VERSION=$(./get_version.sh ${{ inputs.versionChoice }}) >> $GITHUB_ENV
+          NEW_VERSION=$(./.github/workflows/get_version.sh ${{ inputs.versionChoice }})
+          echo RELEASE_VERSION=$NEW_VERSION >> $GITHUB_ENV
         fi
-      env:
-        VERSION: ${{ inputs.versionChoice }}
+        sed -i -E "s/^version:.*/version: $NEW_VERSION/" timescaledb/Chart.yaml
+        echo "git add ."
+        git add .
+        modifications=$(git status | grep "modified" || true)
+        if [ ! -z "$modifications" ]
+        then
+          echo "modifications found: $modifications"
+          git commit -m "modified version $NEW_VERSION in Chart.yaml"
+          git push
+        fi
 
     - name: Create github release
       run: gh release create ${{ env.RELEASE_VERSION }} -F CHANGELOG.md
@@ -74,7 +83,7 @@ jobs:
     - name: get version number
       working-directory: timescaledb
       run: |
-        yq eval ".version = ${{ env.RELEASE_VERSION }}" -i Chart.yaml
+        echo RELEASE_VERSION=$(grep version: Chart.yaml | head -1 | awk '{print $2}') >> $GITHUB_ENV
 
     - name: run helm update
       working-directory: timescaledb

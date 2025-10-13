@@ -7,7 +7,7 @@ postgresql:
   username: postgres # name of super user
   password: secretpassword # password for super user
 
-initdb:
+init:
   enabled: false
   init_user_db: |
     -- Create schemata and users
@@ -24,8 +24,8 @@ initdb:
     SELECT create_hypertable('metrics', 'time', if_not_exists => TRUE);
 
 service:
-  type: NodePort
-  port: 30001
+  type: ClusterIP
+  port: 5432
 
 persistence:
   enabled: true

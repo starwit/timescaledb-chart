@@ -12,14 +12,19 @@ As usually you can adapt installation using customized values. Following snippet
 ```yaml
 
 postgresql:
-  username: postgres
-  password: mysecretpassword
-  database: mytimescale
+  username: postgres # name of super user, postgres is default
+  password: mysecretpassword # password for super user
 
 initdb:
   enabled: true
-  sql: |
-    -- Example bootstrap script
+  init_user_db: |
+    -- Create schemata and users
+    CREATE EXTENSION IF NOT EXISTS timescaledb;
+    CREATE USER myappdb WITH PASSWORD 'password';    
+    CREATE DATABASE "myappdb" owner myappdb;
+
+  init_tables: |  
+    \connect myappdb
     CREATE TABLE IF NOT EXISTS metrics (
       time TIMESTAMPTZ NOT NULL,
       value DOUBLE PRECISION NULL
@@ -32,7 +37,9 @@ persistence:
   storageClass: ""
 ```
 
-Most noteworthy is the initdb field, which allows you, to run SQL scripts on first data base start. This way you can create schemata, user, hypertables, etc
+Most noteworthy is the initdb field, which allows you, to run SQL scripts on first data base start. This way you can create schemata, user, hypertables, etc. In this example, a custom database and a non-privileged user is created. Second script can be used, to create database structures and in this example, a Timescale hypertable is created.
+
+__Note:__ Database initialization is deactivated by default.
 
 ## Contribution
 

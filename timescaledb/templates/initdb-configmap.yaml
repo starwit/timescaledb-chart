@@ -3,5 +3,7 @@ kind: ConfigMap
 metadata:
   name: {{ include "timescaledb.fullname" . }}-initdb
 data:
-  init.sql: |
-    {{- .Values.initdb.sql | nindent 4 }}
+  01-init-user-db.sql: |
+    {{- .Values.init.init_user_db | nindent 4 }}
+  02-init-tables.sql: |
+    {{- .Values.init.init_tables | nindent 4 }}

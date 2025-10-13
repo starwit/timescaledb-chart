@@ -4,14 +4,19 @@ image:
   pullPolicy: IfNotPresent
 
 postgresql:
-  username: postgres
-  password: mysecretpassword
-  database: mytimescale
+  username: postgres # name of super user
+  password: secretpassword # password for super user
 
 initdb:
   enabled: false
-  sql: |
-    -- Example bootstrap script
+  init_user_db: |
+    -- Create schemata and users
+    CREATE EXTENSION IF NOT EXISTS timescaledb;
+    CREATE USER myappdb WITH PASSWORD 'password';    
+    CREATE DATABASE "myappdb" owner myappdb;
+
+  init_tables: |  
+    \connect myappdb
     CREATE TABLE IF NOT EXISTS metrics (
       time TIMESTAMPTZ NOT NULL,
       value DOUBLE PRECISION NULL

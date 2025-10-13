@@ -26,21 +26,26 @@ spec:
                 secretKeyRef:
                   name: {{ include "timescaledb.fullname" . }}-secret
                   key: POSTGRES_PASSWORD
-            - name: POSTGRES_DB
-              value: {{ .Values.postgresql.database }}
           volumeMounts:
             - name: data
               mountPath: /var/lib/postgresql/data
-            {{- if .Values.initdb.enabled }}
-            - name: initdb
-              mountPath: /docker-entrypoint-initdb.d
+            {{- if .Values.init.enabled }}
+            - name: 01-init-user-db
+              mountPath: /docker-entrypoint-initdb.d/01-init-user-db.sql
+              subPath: 01-init-user-db.sql
+            - name: 02-init-tables
+              mountPath: /docker-entrypoint-initdb.d/02-init-tables.sql
+              subPath: 02-init-tables.sql
             {{- end }}
       volumes:
         - name: data
           persistentVolumeClaim:
             claimName: {{ include "timescaledb.fullname" . }}-data
-        {{- if .Values.initdb.enabled }}
-        - name: initdb
+        {{- if .Values.init.enabled }}
+        - name: 01-init-user-db
+          configMap:
+            name: {{ include "timescaledb.fullname" . }}-initdb
+        - name: 02-init-tables
           configMap:
             name: {{ include "timescaledb.fullname" . }}-initdb
         {{- end }}

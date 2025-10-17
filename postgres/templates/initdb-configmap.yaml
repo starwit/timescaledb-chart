@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "postgres.fullname" . }}-initdb
+data:
+  01-init-user-db.sql: |
+    {{- .Values.init.init_user_db | nindent 4 }}
+  02-init-tables.sql: |
+    {{- .Values.init.init_tables | nindent 4 }}

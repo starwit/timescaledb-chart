@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "postgres.fullname" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "postgres.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "postgres.name" . }}
+    spec:
+      containers:
+        - name: postgres
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: {{ .Values.postgresql.username }}
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "postgres.fullname" . }}-secret
+                  key: POSTGRES_PASSWORD
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+            {{- if .Values.init.enabled }}
+            - name: 01-init-user-db
+              mountPath: /docker-entrypoint-initdb.d/01-init-user-db.sql
+              subPath: 01-init-user-db.sql
+            - name: 02-init-tables
+              mountPath: /docker-entrypoint-initdb.d/02-init-tables.sql
+              subPath: 02-init-tables.sql
+            {{- end }}
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ include "postgres.fullname" . }}-data
+        {{- if .Values.init.enabled }}
+        - name: 01-init-user-db
+          configMap:
+            name: {{ include "postgres.fullname" . }}-initdb
+        - name: 02-init-tables
+          configMap:
+            name: {{ include "postgres.fullname" . }}-initdb
+        {{- end }}

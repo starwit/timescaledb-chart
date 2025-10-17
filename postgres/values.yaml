@@ -1,0 +1,34 @@
+image:
+  repository: postgres
+  tag: 17.6
+  pullPolicy: IfNotPresent
+
+postgresql:
+  username: postgres # name of super user
+  password: secretpassword # password for super user
+
+init:
+  enabled: true
+  init_user_db: |
+    -- Create schemata and users
+    CREATE USER myappdb WITH PASSWORD 'password';    
+    CREATE DATABASE "myappdb" owner myappdb;
+
+  init_tables: | 
+    -- Create tables
+    \connect myappdb
+    CREATE TABLE IF NOT EXISTS metrics (
+      time TIMESTAMPTZ NOT NULL,
+      value DOUBLE PRECISION NULL
+    );
+
+service:
+  type: ClusterIP
+  port: 5432
+
+persistence:
+  enabled: true
+  size: 20Gi
+  storageClass: ""
+
+resources: {}

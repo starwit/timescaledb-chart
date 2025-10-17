@@ -1,45 +1,24 @@
-# Helm chart for TimescaleDB
-Use this Helm chart to install a single node TimescaleDB to a Kubernetes cluster. It does not aim for clustered/HA installations, just one TimeScale instance.
+# Helm chart for TimescaleDB / PostgreSQL
+This repository contains Helm charts that will install:
+* PostgreSQL
+* TimescaleDB
 
-## Usage
-Assuming you have a Kubernetes cluster configured, installation can then be done with the following command:
+Every chart aims at deploying a single node instance. So features like load balancing or high availability are neither integrated nor are they intended in future releases.
 
-```bash
-helm -n yournamespace install timescale oci://registry-1.docker.io/starwitorg/timescaledb-chart -f yourvalues.yaml
-```
+These charts were created, to keep simple deployments for smaller projects open source. They are thus published using AGPLv3 and are intended to stay open source.
 
-As usually you can adapt installation using customized values. Following snippet shows an example: 
-```yaml
+## PostgreSQL
+This chart uses official [Postgres Docker image](https://hub.docker.com/_/postgres). Make sure to visit the [homepage](https://www.postgresql.org) of this fantastic open source software and learn how you can contribute.
 
-postgresql:
-  username: postgres # name of super user, postgres is default
-  password: mysecretpassword # password for super user
+See [readme](timescaledb/Readme.md) how to use Postgres chart.
 
-init:
-  enabled: true
-  init_user_db: |
-    -- Create schemata and users
-    CREATE EXTENSION IF NOT EXISTS timescaledb;
-    CREATE USER myappdb WITH PASSWORD 'password';    
-    CREATE DATABASE "myappdb" owner myappdb;
+## TimescaleDB
+TimescaleDB is an extension for PostgreSQL, that makes working with time series data easy. It is an awesome project and please visit their [homepage](https://www.tigerdata.com/blog/tag/open-source) and see how you can contribute. Chart is using their [Docker image](https://hub.docker.com/r/timescale/timescaledb).
 
-  init_tables: |  
-    \connect myappdb
-    CREATE TABLE IF NOT EXISTS metrics (
-      time TIMESTAMPTZ NOT NULL,
-      value DOUBLE PRECISION NULL
-    );
-    SELECT create_hypertable('metrics', 'time', if_not_exists => TRUE);
+See [readme](timescaledb/Readme.md) how to use TimescaleDB chart. 
 
-persistence:
-  enabled: true
-  size: 20Gi # request storage space from Kubernetes here
-  storageClass: ""
-```
+Please note, that [PostGIS](https://postgis.net) extension is also included in this chart.
 
-Most noteworthy is the initdb field, which allows you, to run SQL scripts on first data base start. This way you can create schemata, user, hypertables, etc. In this example, a custom database and a non-privileged user is created. Second script can be used, to create database structures and in this example, a Timescale hypertable is created.
-
-__Note:__ Database initialization is deactivated by default.
 
 ## Contribution
 
@@ -48,5 +27,5 @@ As it has become difficult to find Helm charts for a number of crucial software 
 Bug reports, doc improvements and pull requests are very much welcome!
 
 # License
-Project is licensed under AGPL 3 and the license can be found [here](https://github.com/starwit/Urbalytix/blob/main/LICENSE). This component is part of a publicly funded project by the city of Wolfsburg and thus usage in your community is very much encouraged. It is part of a group of software modules that shall help communities to analyze urban space and to gain statistical insights.
+Project is licensed under AGPL 3 and the license can be found [here](https://github.com/starwit/Urbalytix/blob/main/LICENSE). This component is part of a publicly funded project by the city of [Wolfsburg](https://www.wolfsburg.de/en-us/) and thus usage in your community is very much encouraged. It is part of a group of software modules that shall help communities to analyze urban space and to gain statistical insights.
 

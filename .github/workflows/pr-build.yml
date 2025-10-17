@@ -34,6 +34,13 @@ jobs:
       working-directory: timescaledb
       run: helm template .
     
+    - name: run helm dependency update
+      working-directory: postgres
+      run: helm dep update
+
+    - name: run helm template
+      working-directory: postgres
+      run: helm template .
 
 
 

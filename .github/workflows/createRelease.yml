@@ -48,13 +48,14 @@ jobs:
           echo RELEASE_VERSION=$NEW_VERSION >> $GITHUB_ENV
         fi
         sed -i -E "s/^version:.*/version: $NEW_VERSION/" timescaledb/Chart.yaml
+        sed -i -E "s/^version:.*/version: $NEW_VERSION/" postgres/Chart.yaml
         echo "git add ."
         git add .
         modifications=$(git status | grep "modified" || true)
         if [ ! -z "$modifications" ]
         then
           echo "modifications found: $modifications"
-          git commit -m "modified version $NEW_VERSION in Chart.yaml"
+          git commit -m "modified version $NEW_VERSION in Chart.yaml" timescaledb/Chart.yaml postgres/Chart.yaml
           git push
         fi
 
@@ -69,7 +70,7 @@ jobs:
         git checkout ${{ env.RELEASE_VERSION }}
 
   publish_helm:
-    name: "Publish helm chart"
+    name: "Publish helm charts"
     needs: build
     runs-on: [self-hosted, linux, X64]
     
@@ -94,3 +95,13 @@ jobs:
 
     - name: run helm push
       run: helm push timescaledb-chart-${{ env.RELEASE_VERSION }}.tgz oci://registry-1.docker.io/starwitorg
+
+    - name: run helm update
+      working-directory: postgres
+      run: helm dep update
+
+    - name: run helm package
+      run: helm package postgres
+
+    - name: run helm push
+      run: helm push postgres-chart-${{ env.RELEASE_VERSION }}.tgz oci://registry-1.docker.io/starwitorg

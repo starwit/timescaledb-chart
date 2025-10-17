@@ -15,7 +15,7 @@ postgresql:
   username: postgres # name of super user, postgres is default
   password: mysecretpassword # password for super user
 
-initdb:
+init:
   enabled: true
   init_user_db: |
     -- Create schemata and users

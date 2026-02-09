@@ -3,4 +3,4 @@ name: timescaledb-chart
 description: A Helm chart for deploying TimescaleDB single-node instance
 type: application
 version: 1.2.6
-appVersion: "pg17" 
+appVersion: "pg18" 

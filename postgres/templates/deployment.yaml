@@ -20,12 +20,14 @@ spec:
             - containerPort: 5432
           env:
             - name: POSTGRES_USER
-              value: {{ .Values.postgresql.username }}
+              value: {{ .Values.auth.username }}
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ include "postgres.fullname" . }}-secret
                   key: POSTGRES_PASSWORD
+            - name: POSTGRES_DATABASE
+              value: {{ .Values.auth.database }}
           volumeMounts:
             - name: data
               mountPath: /var/lib/postgresql/data

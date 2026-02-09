@@ -1,6 +1,6 @@
 image:
   repository: timescale/timescaledb-ha
-  tag: pg17
+  tag: pg18
   pullPolicy: IfNotPresent
 
 postgresql:

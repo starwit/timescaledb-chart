@@ -3,14 +3,16 @@ image:
   tag: 17.6
   pullPolicy: IfNotPresent
 
-postgresql:
+auth:
   username: postgres # name of super user
-  password: secretpassword # password for super user
+  postgressPassword: secretpassword # password for super user
+  database: myappdb # name of custom database
+  password: userpassword # password for custom user
 
 init:
   enabled: true
   init_user_db: |
-    -- Create schemata and users
+    -- Create additional schemata, users, enable extensions, ...
     CREATE USER myappdb WITH PASSWORD 'password';    
     CREATE DATABASE "myappdb" owner myappdb;
 

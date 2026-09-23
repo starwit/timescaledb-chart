@@ -1,6 +1,6 @@
 image:
   repository: timescale/timescaledb-ha
-  tag: pg17
+  tag: pg18-amd64
   pullPolicy: IfNotPresent
 
 postgresql:
@@ -13,7 +13,8 @@ init:
     -- Create schemata and users
     CREATE EXTENSION IF NOT EXISTS timescaledb;
     CREATE USER myappdb WITH PASSWORD 'password';    
-    CREATE DATABASE "myappdb" owner myappdb;
+    -- prevent deleting existing db by creating a new one
+    SELECT 'CREATE DATABASE myappdb owner myappdb' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'myappdb')\gexec
 
   init_tables: |  
     \connect myappdb

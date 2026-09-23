@@ -28,7 +28,11 @@ spec:
                   key: POSTGRES_PASSWORD
           volumeMounts:
             - name: data
+              {{- if ge (int (regexFind "^[0-9]+" (toString .Values.image.tag))) 18 }}
+              mountPath: /var/lib/postgresql/18/docker
+              {{- else }}
               mountPath: /var/lib/postgresql/data
+              {{- end }}
             {{- if .Values.init.enabled }}
             - name: 01-init-user-db
               mountPath: /docker-entrypoint-initdb.d/01-init-user-db.sql

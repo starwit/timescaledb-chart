@@ -1,5 +1,5 @@
 # PostgreSQL Helm Chart
-Deploying a single node PostgreSQL instance - no more, no less.
+Deploying a single node PostgreSQL instance - no more, no less. Supports Postgres 17/18.
 
 ## Usage
 Assuming you have a Kubernetes cluster configured, installation can then be done with the following command:
@@ -19,9 +19,8 @@ init:
   enabled: true
   init_user_db: |
     -- Create schemata and users
-    CREATE EXTENSION IF NOT EXISTS timescaledb;
     CREATE USER myappdb WITH PASSWORD 'password';    
-    CREATE DATABASE "myappdb" owner myappdb;
+    SELECT 'CREATE DATABASE myappdb owner myappdb' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'myappdb')\gexec
 
   init_tables: |  
     \connect myappdb

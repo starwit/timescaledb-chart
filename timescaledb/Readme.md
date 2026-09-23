@@ -9,15 +9,15 @@ helm -n yournamespace install timescale oci://registry-1.docker.io/starwitorg/ti
 
 The chart supports the following TimescaleDB image tags:
 
-* `pg17`, using `/var/lib/postgresql/data` for persistent data.
-* `pg18-amd64`, using `/var/lib/postgresql/18/docker` for persistent data.
+* `latest-pg17-oss`, using `/var/lib/postgresql/data` for persistent data.
+* `latest-pg18-oss`, using `/var/lib/postgresql/18/docker` for persistent data.
 
 Set the tag in your values file when selecting the image version:
 
 ```yaml
 image:
   repository: timescale/timescaledb-ha
-  tag: pg18-amd64
+  tag: latest-pg18-oss
 ```
 
 As usually you can adapt installation using customized values. Following snippet shows an example: 

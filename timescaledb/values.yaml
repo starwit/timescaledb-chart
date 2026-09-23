@@ -1,6 +1,6 @@
 image:
-  repository: timescale/timescaledb-ha
-  tag: pg18-amd64
+  repository: timescale/timescaledb
+  tag: latest-pg18-oss
   pullPolicy: IfNotPresent
 
 postgresql:

@@ -28,7 +28,7 @@ spec:
                   key: POSTGRES_PASSWORD
           volumeMounts:
             - name: data
-              {{- if eq .Values.image.tag "pg18-amd64" }}
+              {{- if eq .Values.image.tag "latest-pg18-oss" }}
               mountPath: /var/lib/postgresql/18/docker
               {{- else }}
               mountPath: /var/lib/postgresql/data

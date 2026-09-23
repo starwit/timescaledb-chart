@@ -7,6 +7,19 @@ Assuming you have a Kubernetes cluster configured, installation can then be done
 helm -n yournamespace install timescale oci://registry-1.docker.io/starwitorg/timescaledb-chart -f yourvalues.yaml
 ```
 
+The chart supports the following TimescaleDB image tags:
+
+* `latest-pg17-oss`, using `/var/lib/postgresql/data` for persistent data.
+* `latest-pg18-oss`, using `/var/lib/postgresql/18/docker` for persistent data.
+
+Set the tag in your values file when selecting the image version:
+
+```yaml
+image:
+  repository: timescale/timescaledb-ha
+  tag: latest-pg18-oss
+```
+
 As usually you can adapt installation using customized values. Following snippet shows an example: 
 ```yaml
 

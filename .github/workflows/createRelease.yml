@@ -42,11 +42,12 @@ jobs:
 
     - name: create new version
       run: |
-        if [ -z "${{ env.RELEASE_VERSION }}" ] 
-        then
-          NEW_VERSION=$(./.github/workflows/get_version.sh ${{ inputs.versionChoice }})
-          echo RELEASE_VERSION=$NEW_VERSION >> $GITHUB_ENV
+        NEW_VERSION="${{ env.RELEASE_VERSION }}"
+        if [ -z "$NEW_VERSION" ]; then
+          NEW_VERSION=$(./.github/workflows/get_version.sh "${{ inputs.versionChoice }}")
+          echo "RELEASE_VERSION=$NEW_VERSION" >> "$GITHUB_ENV"
         fi
+        
         sed -i -E "s/^version:.*/version: $NEW_VERSION/" timescaledb/Chart.yaml
         sed -i -E "s/^version:.*/version: $NEW_VERSION/" postgres/Chart.yaml
         echo "git add ."
@@ -75,6 +76,11 @@ jobs:
     runs-on: [self-hosted, linux, X64]
     
     steps:
+    - name: checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: '0'
+
     - name: get helm
       uses: azure/setup-helm@v4
 
